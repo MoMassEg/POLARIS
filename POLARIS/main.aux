@@ -1,0 +1,193 @@
+\relax 
+\citation{mikolov2013distributed,pennington2014glove,meng2019spherical}
+\citation{meng2019spherical,banerjee2005clustering}
+\citation{meng2019spherical}
+\citation{harris1954distributional}
+\citation{mrksic2017semantic}
+\@writefile{toc}{\contentsline {section}{\numberline {I}Introduction}{1}{}\protected@file@percent }
+\citation{bonnabel2013stochastic}
+\citation{mikolov2013distributed}
+\citation{pennington2014glove}
+\citation{bojanowski2017enriching}
+\citation{levy2014neural}
+\citation{xing2015normalized,meng2019spherical}
+\citation{nickel2017poincare,nickel2018learning,tifrea2018poincare}
+\citation{banerjee2005clustering,mardia2000directional}
+\citation{dhillon2001concept}
+\citation{gopal2014von,davidson2018hyperspherical,wang2020understanding}
+\citation{meng2019spherical}
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces Geometric comparison between conventional single-layer spherical embeddings and the proposed POLARIS architecture. (a) Standard spherical embeddings such as JoSE pull co-occurring synonyms and antonyms into the same hemisphere ($\cos \theta _{\text  {syn}} = 0.116$, $\cos \theta _{\text  {ant}} = 0.106$), leaving the South Pole empty. (b) POLARIS partitions $\mathbb  {S}^{p-1}$ into three functional zones: North Polar Cap ($\cos \theta \to +1$), Equatorial Belt ($\cos \theta \to 0$), and South Antipodal Pole ($\cos \theta \to -1$). (c) Three isometric spherical layers connected by $\mathcal  {O}(p)$ Householder reflections and a monotonic concentration cascade ($\kappa ^{(1)} > \kappa ^{(2)} > \kappa ^{(3)}$) separate fine-grained lexical polarity from global document topic transport.}}{2}{}\protected@file@percent }
+\newlabel{fig:polaris_hook}{{1}{2}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {I-A}}Contributions}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {II}Related Work}{2}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-A}}Distributional Euclidean and Hyperbolic Embeddings}{2}{}\protected@file@percent }
+\citation{miller1995wordnet}
+\citation{pavlick2015ppdb}
+\citation{faruqui2015retrofitting}
+\citation{mrksic2016counter}
+\citation{mrksic2017semantic}
+\citation{derr2018signed}
+\citation{cartwright1956structural}
+\citation{tomczak2016improving,mhammedi2017efficient}
+\citation{mhammedi2017efficient}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-B}}Spherical Representation Learning}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {II-C}}Lexical Polarity and Signed Graph Learning}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {III}Methodology}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-A}}Problem Formulation and Mathematical Notation}{3}{}\protected@file@percent }
+\newlabel{eq:sphere_def}{{1}{3}{}{}{}}
+\newlabel{eq:tangent_space}{{2}{3}{}{}{}}
+\newlabel{eq:tangent_proj}{{3}{3}{}{}{}}
+\newlabel{eq:retraction}{{4}{3}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-B}}Overall Framework}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-C}}Main Architectural Components}{3}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}1}Isometric Orthogonal Householder Reflection Chains}{3}{}\protected@file@percent }
+\newlabel{eq:householder}{{5}{3}{}{}{}}
+\newlabel{eq:householder_fast}{{6}{3}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}2}Self-Calibrating Monotonic Concentration Cascade}{3}{}\protected@file@percent }
+\newlabel{eq:kappa_cascade}{{7}{3}{}{}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces End-to-end architecture and optimization workflow of POLARIS. Base word embeddings on $\mathbb  {S}^{99}$ pass through three sequential Householder-reflected spherical layers with decreasing directional concentration ($\kappa ^{(1)} > \kappa ^{(2)} > \kappa ^{(3)}$). Layer 2 feeds lexical polarity representations and bipolar salience to sentiment document readout ($\mathbf  {d}_{\text  {rt}}$), whereas Layer 3 provides topic-transported representations for multi-class document clustering and classification ($\mathbf  {d}_{\text  {ng}}$).}}{4}{}\protected@file@percent }
+\newlabel{fig:polaris_workflow}{{2}{4}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}3}Layered Spherical Representations and Signed Geodesic Involution}{4}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}3a}Layer 1 (1-Hop Signed Lexical Drift)}{4}{}\protected@file@percent }
+\newlabel{eq:layer1_drift}{{8}{4}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}3b}Layer 2 (2-Hop Signed Geodesic Involution)}{4}{}\protected@file@percent }
+\newlabel{eq:inv1}{{9}{4}{}{}{}}
+\newlabel{eq:inv2}{{10}{4}{}{}{}}
+\newlabel{eq:layer2_drift}{{11}{4}{}{}{}}
+\@writefile{toc}{\contentsline {paragraph}{\numberline {\mbox  {III-C}3c}Layer 3 (Bipartite Word-Document-Word Transport)}{4}{}\protected@file@percent }
+\newlabel{eq:bip_transport}{{12}{4}{}{}{}}
+\newlabel{eq:layer3_drift}{{13}{4}{}{}{}}
+\newlabel{eq:layer_update}{{14}{4}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}4}Multi-Scale Spherical Layer Fusion}{4}{}\protected@file@percent }
+\newlabel{eq:multiscale_fusion}{{15}{4}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-C}5}Intrinsic Bipolar Salience and Directed Negation Reflection}{4}{}\protected@file@percent }
+\newlabel{eq:bipolar_energy}{{16}{4}{}{}{}}
+\newlabel{eq:negation_gate}{{17}{4}{}{}{}}
+\citation{bonnabel2013stochastic,absil2008optimization}
+\newlabel{eq:doc_rt}{{18}{5}{}{}{}}
+\newlabel{eq:doc_ng}{{19}{5}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-D}}$C^1$-Smooth Softplus Tri-Zonal Geodesic Loss Functions}{5}{}\protected@file@percent }
+\newlabel{eq:softplus_def}{{20}{5}{}{}{}}
+\newlabel{eq:softplus_props}{{21}{5}{}{}{}}
+\newlabel{eq:total_loss}{{22}{5}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}1}North Polar Cap Attraction Zone ($\mathcal  {L}_{\text  {attr}}^{(\ell )}$)}{5}{}\protected@file@percent }
+\newlabel{eq:loss_attr}{{23}{5}{}{}{}}
+\newlabel{eq:loss_cooc}{{24}{5}{}{}{}}
+\newlabel{eq:loss_syn}{{25}{5}{}{}{}}
+\newlabel{eq:loss_doc}{{26}{5}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}2}South Antipodal Pole Repulsion Zone ($\mathcal  {L}_{\text  {anti}}^{(\ell )}$)}{5}{}\protected@file@percent }
+\newlabel{eq:loss_anti}{{27}{5}{}{}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces POLARIS Inductive Representation Learning}}{5}{}\protected@file@percent }
+\newlabel{alg:polaris}{{1}{5}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-D}3}Equatorial Orthogonality Zone ($\mathcal  {L}_{\text  {eq}}^{(\ell )}$)}{5}{}\protected@file@percent }
+\newlabel{eq:loss_eq}{{28}{5}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {III-E}}Riemannian Optimization, Convergence Analysis, and Complexity}{5}{}\protected@file@percent }
+\newlabel{eq:riem_dir}{{29}{5}{}{}{}}
+\newlabel{eq:geodesic_step}{{30}{5}{}{}{}}
+\newlabel{thm:convergence}{{1}{5}{}{}{}}
+\citation{bonnabel2013stochastic}
+\citation{absil2008optimization,boumal2023intromanifolds}
+\citation{robbins1971convergence}
+\citation{pang2005seeing}
+\citation{lang1995newsweeder}
+\citation{hill2015simlex}
+\citation{miller1995wordnet}
+\newlabel{eq:finite_horizon_bound}{{33}{6}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {III-E}1}Complexity}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {IV}Experiments}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-A}}Experimental Setup}{6}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-A}1}Datasets, Lexical Graphs, and Strict Leakage Audit}{6}{}\protected@file@percent }
+\citation{mikolov2013distributed}
+\citation{levy2014neural}
+\citation{nickel2017poincare}
+\citation{mrksic2017semantic}
+\citation{meng2019spherical}
+\citation{turney2002thumbs,hamilton2016inducing}
+\citation{mikolov2013distributed}
+\citation{nickel2017poincare}
+\citation{mrksic2017semantic}
+\citation{meng2019spherical}
+\citation{mikolov2013distributed}
+\citation{nickel2017poincare}
+\citation{mrksic2017semantic}
+\citation{meng2019spherical}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-A}2}Baselines and Fairness Protocol}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-A}3}Evaluation Metrics and Reproducibility Protocol}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-B}}Main Results and Deep Scientific Interpretation}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-B}1}Experiment 1: Tri-Zonal Geometry and Leak-Free AntSyn Verification}{7}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-B}2}Experiment 2: Word Similarity on SimLex-999}{7}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {I}{\ignorespaces Main Inductive Benchmark Evaluation Across 10 Independent Random Seeds (Mean $\pm $ 95\% Student's $t$ CI). Best Results Are in \textbf  {Bold}. $^{\ast \ast \ast }p_{\text  {holm}} < 0.001$ Against JoSE via Paired $t$-Tests with Holm-Bonferroni Correction. Zero Data Leakage Across Splits.}}{8}{}\protected@file@percent }
+\newlabel{tab:polaris_main_q1}{{I}{8}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {II}{\ignorespaces Experiment 1: Tri-Zonal Spherical Geometry and Leak-Free AntSyn Verification Across 10 Seeds (Mean $\pm $ SD). Target Geometry Places Synonyms Toward $+1.0$ (North Pole), Unrelated Words Toward $0.0$ (Equator), and Antonyms Toward $-1.0$ (South Pole). Zero Transitive Triangles in Evaluation.}}{8}{}\protected@file@percent }
+\newlabel{tab:exp1_geometry}{{II}{8}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {III}{\ignorespaces Experiment 2: Word Similarity Evaluation on SimLex-999 Across 10 Seeds (Mean $\pm $ SD, 856 Active Pairs Covered in Vocabulary).}}{8}{}\protected@file@percent }
+\newlabel{tab:exp2_simlex}{{III}{8}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {IV}{\ignorespaces Experiment 3 (Panels A \& B): Inductive Document Clustering on Held-Out Test Sets for 20 Newsgroups ($K=20$) and Rotten Tomatoes ($K=2$) Across 10 Seeds (Mean $\pm $ SD; MI in nats).}}{8}{}\protected@file@percent }
+\newlabel{tab:exp3_clustering}{{IV}{8}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {V}{\ignorespaces Experiment 3 (Panel C): Anchor-Guided Zero-Shot Polarity Projection Along Antipodal Axis $\mathbf  {p}_{\text  {bip}} \in \mathbb  {S}^{99}$ on Rotten Tomatoes Held-Out Test Reviews (10 Seeds, Mean $\pm $ SD).}}{8}{}\protected@file@percent }
+\newlabel{tab:exp3_polarity_proj}{{V}{8}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-B}3}Experiment 3: Inductive Document Clustering and Polarity Projection}{8}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {VI}{\ignorespaces Experiment 4: Inductive Non-Parametric $k$-NN Document Classification ($k=3$) on Held-Out Test Sets Across 10 Seeds (Mean $\pm $ SD).}}{9}{}\protected@file@percent }
+\newlabel{tab:exp4_knn}{{VI}{9}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-B}4}Experiment 4: Inductive Document Classification}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-C}}Ablation Studies}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {IV-D}}Sensitivity Analysis, Convergence, and Computational Cost}{9}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}1}Spherical Depth Sensitivity ($L \in \{1, 2, 3, 4, 5\}$)}{9}{}\protected@file@percent }
+\citation{mrksic2017semantic}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Multi-scale structural and sensitivity analyses across 10 random seeds. (a) Internal progression across Layer 1, Layer 2, Layer 3, and Multi-Scale Fusion inside POLARIS, showing tightest antipodal alignment ($\text  {AAS} = 0.7245$) at Layer 2 and highest SimLex correlation ($\rho = 0.370$) at Layer 3. (b) Spherical depth sensitivity across $L \in \{1, 2, 3, 4, 5\}$, showing the dramatic jump in 20NG Macro-F1 from $\sim 0.300$ ($L=1, 2$) to $0.428$ ($L=3$) upon introducing Layer 3 bipartite transport $\mathbf  {W}_{\text  {bip}}$. (c) Non-parametric $k$-NN classification Macro-F1 on Rotten Tomatoes across $k \in \{1, 3, 5, 10\}$.}}{10}{}\protected@file@percent }
+\newlabel{fig:layered_depth_knn}{{3}{10}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VII}{\ignorespaces Experiment 5 (Part A): Component-Wise Architectural Ablation Study Across 10 Independent Seeds (Mean $\pm $ SD). Wall-Clock Optimization Times Measured on Quadro RTX 4000 GPU (10.34s Full Model).}}{10}{}\protected@file@percent }
+\newlabel{tab:exp5_ablation}{{VII}{10}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {VIII}{\ignorespaces Experiment 5 (Part B): Spherical Depth Sensitivity Across $L \in \{1, 2, 3, 4, 5\}$ on Held-Out Test Splits (10 Seeds, Mean $\pm $ SD).}}{10}{}\protected@file@percent }
+\newlabel{tab:exp5_depth}{{VIII}{10}{}{}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {\mbox  {IV-D}2}Convergence, Cost, and Multi-Seed Stability}{10}{}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {IX}{\ignorespaces Experiment 6: Wall-Clock Training Time, Parameter Footprint, and Complexity Across 10 Seeds on Quadro RTX 4000 GPU.}}{10}{}\protected@file@percent }
+\newlabel{tab:exp6_efficiency}{{IX}{10}{}{}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {V}Discussion}{10}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-A}}Why Layered Multi-Scale Hyperspherical Representations Resolve the Polarity Dilemma}{10}{}\protected@file@percent }
+\citation{meng2019spherical}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Riemannian convergence diagnostics (Seed 42). (a) Monotonic decrease of the Tri-Zonal Loss $\mathcal  {L}(\boldsymbol  {\Theta }_t)$ from $4.116$ to $2.309$ while tangent gradient norm $\|\operatorname  {grad}\mathcal  {L}\|_2$ stabilizes at a small $\sim 3\times 10^{-4}$ floor. (b) Evolution of the self-calibrating concentration cascade $\kappa ^{(1)} > \kappa ^{(2)} > \kappa ^{(3)}$, sharpening to $[10.32 > 7.36 > 5.06]$ at Epoch 14.}}{11}{}\protected@file@percent }
+\newlabel{fig:convergence_cascade}{{4}{11}{}{}{}}
+\@writefile{lot}{\contentsline {table}{\numberline {X}{\ignorespaces Experiment 7: Spherical Pole and Antipodal Geometry Inspection of Learned POLARIS Unit Vectors $\mathbf  {u} \in \mathbb  {S}^{99}$. North Pole Synonyms ($\cos \theta \to +1.0$), Equatorial Orthogonals ($|\cos \theta | \le 10^{-4}$), and South Pole Antipodes ($\cos \theta \to -1.0$).}}{11}{}\protected@file@percent }
+\newlabel{tab:exp7_qualitative}{{X}{11}{}{}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {\mbox  {V-B}}Empirical Observations and Error Analysis}{11}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VI}Limitations}{11}{}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {VII}Conclusion}{11}{}\protected@file@percent }
+\bibcite{mikolov2013distributed}{1}
+\bibcite{pennington2014glove}{2}
+\bibcite{meng2019spherical}{3}
+\bibcite{banerjee2005clustering}{4}
+\bibcite{harris1954distributional}{5}
+\bibcite{mrksic2017semantic}{6}
+\bibcite{bonnabel2013stochastic}{7}
+\bibcite{bojanowski2017enriching}{8}
+\bibcite{levy2014neural}{9}
+\bibcite{xing2015normalized}{10}
+\bibcite{nickel2017poincare}{11}
+\bibcite{nickel2018learning}{12}
+\bibcite{tifrea2018poincare}{13}
+\bibcite{mardia2000directional}{14}
+\bibcite{dhillon2001concept}{15}
+\bibcite{gopal2014von}{16}
+\bibcite{davidson2018hyperspherical}{17}
+\bibcite{wang2020understanding}{18}
+\bibcite{miller1995wordnet}{19}
+\bibcite{pavlick2015ppdb}{20}
+\bibcite{faruqui2015retrofitting}{21}
+\bibcite{mrksic2016counter}{22}
+\bibcite{nguyen2016integrating}{23}
+\bibcite{tang2014learning}{24}
+\bibcite{derr2018signed}{25}
+\bibcite{cartwright1956structural}{26}
+\bibcite{tomczak2016improving}{27}
+\bibcite{mhammedi2017efficient}{28}
+\bibcite{robbins1971convergence}{29}
+\bibcite{pang2005seeing}{30}
+\bibcite{lang1995newsweeder}{31}
+\bibcite{hill2015simlex}{32}
+\bibcite{turney2002thumbs}{33}
+\bibcite{hamilton2016inducing}{34}
+\bibcite{absil2008optimization}{35}
+\bibcite{boumal2023intromanifolds}{36}
+\@writefile{toc}{\contentsline {section}{References}{12}{}\protected@file@percent }
+\gdef \@abspage@last{12}

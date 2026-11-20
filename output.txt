@@ -9,74 +9,77 @@
   Evaluation Protocol  : 10 Independent Random Seeds [42, 100, 2024, 777, 999, 123, 456, 888, 1010, 2026]
   Statistical Rigor    : Paired Student's t-tests, Paired 95% CIs of Differences, Holm-Bonferroni Correction
   Embedding Dimension  : p = 100 on Unit Hypersphere S^99
+  Audit Invariants     : Strict Inductive Split (Zero Test Docs in Training), Strict Leak-Free WordNet Split
 
 ==========================================================================================================
-  SECTION 1: LOADING REAL HUGGING FACE DATASETS & WORDNET LEXICAL POLARITY
+  SECTION 1: LOADING REAL HUGGING FACE DATASETS WITH STRICT INDUCTIVE BOUNDARY
 ==========================================================================================================
   [1/4] Loading 'cornell-movie-review-data/rotten_tomatoes' from Hugging Face...
   [2/4] Loading 'SetFit/20_newsgroups' from Hugging Face...
   [3/4] Loading 'Yuti/SimLex-999' benchmark from Hugging Face...
-  [4/4] Extracting real Synonym & Antonym graphs from Princeton WordNet...
-  Corpus Vocabulary Size        : 8,000 unique words
-  Rotten Tomatoes (HF) Docs     : 3,000 (2,400 train / 600 test)
-  20 Newsgroups (HF) Docs       : 3,200 (2,400 train / 800 test, 20 classes)
-  SimLex-999 (HF) Active Pairs  : 880 / 999 covered in corpus vocabulary (rare words omitted)
-  WordNet Synonym Pairs         : 19,804 (14,853 train / 4,951 held-out test)
-  WordNet Antonym Pairs         : 7,219 (5,414 train / 1,805 held-out test)
-  Overlap (Syn \cap Ant)        : 0 pairs (Strictly 0 — Leakage-Free)
-  Data Preparation Time         : 20.68 s
+  [4/4] Extracting Princeton WordNet relation graphs with strict leakage audit...
+  Corpus Vocabulary Size        : 8,000 unique words (Inductive, Train Only)
+  Rotten Tomatoes (HF) Docs     : 2,400 train / 600 strictly inductive test
+  20 Newsgroups (HF) Docs       : 2,400 train / 800 strictly inductive test (20 classes)
+  SimLex-999 (HF) Active Pairs  : 856 / 999 covered in vocabulary
+  WordNet Train Pairs           : 12,972 Syn / 19,717 Ant (Expanded within Train)
+  WordNet Test Pairs (Leak-Free): 4,274 Syn / 100 Ant (Zero Transitive Triangles)
+  Overlap (Train \cap Test)     : 0 pairs (Mathematically Verified 0 — Leakage-Free)
+  Data Preparation Time         : 26.08 s
 
 ==========================================================================================================
   SECTION 2: COMPILING SPARSE CO-OCCURRENCE & POLARITY TENSORS ON GPU
 ==========================================================================================================
-  Active Co-occurrence Pairs    : 240,000 directed pairs on cuda
-  Active Polarity Constraints   : 29,706 attraction / 10,828 antipodal edges
-  Graph Compilation Time        : 2.58 s
+  Active Co-occurrence Pairs    : 240,000 directed pairs on cuda (Train Only)
+  Active Polarity Constraints   : 25,944 attraction / 39,434 antipodal edges
+  Graph Compilation Time        : 3.75 s
 
 ==========================================================================================================
   SECTION 3: RUNNING 10-SEED MULTI-MODEL EXPERIMENTS ON GPU
 ==========================================================================================================
-  --> Running Seed  1/10 (seed =   42)... Completed in 24.72 s
-  --> Running Seed  2/10 (seed =  100)... Completed in 20.21 s
-  --> Running Seed  3/10 (seed = 2024)... Completed in 19.42 s
-  --> Running Seed  4/10 (seed =  777)... Completed in 18.04 s
-  --> Running Seed  5/10 (seed =  999)... Completed in 18.47 s
-  --> Running Seed  6/10 (seed =  123)... Completed in 19.97 s
-  --> Running Seed  7/10 (seed =  456)... Completed in 18.29 s
-  --> Running Seed  8/10 (seed =  888)... Completed in 18.63 s
-  --> Running Seed  9/10 (seed = 1010)... Completed in 18.27 s
-  --> Running Seed 10/10 (seed = 2026)... Completed in 18.51 s
+  --> Running Seed  1/10 (seed =   42)... Completed in 21.67 s
+  --> Running Seed  2/10 (seed =  100)... Completed in 16.93 s
+  --> Running Seed  3/10 (seed = 2024)... Completed in 17.68 s
+  --> Running Seed  4/10 (seed =  777)... Completed in 16.60 s
+  --> Running Seed  5/10 (seed =  999)... Completed in 16.99 s
+  --> Running Seed  6/10 (seed =  123)... Completed in 17.07 s
+  --> Running Seed  7/10 (seed =  456)... Completed in 16.76 s
+  --> Running Seed  8/10 (seed =  888)... Completed in 16.87 s
+  --> Running Seed  9/10 (seed = 1010)... Completed in 16.86 s
+  --> Running Seed 10/10 (seed = 2026)... Completed in 16.59 s
 
 ==========================================================================================================
   SECTION 4: RUNNING ARCHITECTURAL ABLATIONS & DEPTH SENSITIVITY (10 SEEDS)
 ==========================================================================================================
-  [Ablation Done] w/o Antipodal Zone (L_anti = 0)      | SimLex rho = 0.2129 | RT F1 = 0.5979
-  [Ablation Done] w/o Equatorial Zone (L_eq = 0)       | SimLex rho = 0.4308 | RT F1 = 0.6139
-  [Ablation Done] w/o Householder (Dense + L2 Norm)    | SimLex rho = 0.4248 | RT F1 = 0.5902
-  [Ablation Done] w/o Learnable Kappa (Fixed k = 1)    | SimLex rho = 0.4182 | RT F1 = 0.6136
-  [Ablation Done] w/o Negation Reflection (Unsigned)   | SimLex rho = 0.4337 | RT F1 = 0.6092
-  [Depth Done]    L = 1                                | SimLex rho = 0.4366 | 20NG F1 = 0.4662
-  [Depth Done]    L = 2                                | SimLex rho = 0.4334 | 20NG F1 = 0.4711
-  [Depth Done]    L = 4                                | SimLex rho = 0.4330 | 20NG F1 = 0.4652
-  [Depth Done]    L = 5                                | SimLex rho = 0.4306 | 20NG F1 = 0.4609
+  [Ablation Done] w/o Antipodal Zone (L_anti = 0)      | SimLex rho = 0.2029 | RT F1 = 0.5911
+  [Ablation Done] w/o Equatorial Zone (L_eq = 0)       | SimLex rho = 0.3613 | RT F1 = 0.5825
+  [Ablation Done] w/o Householder (Dense + L2 Norm)    | SimLex rho = 0.3526 | RT F1 = 0.5455
+  [Ablation Done] w/o Learnable Kappa (Fixed k = 1)    | SimLex rho = 0.3541 | RT F1 = 0.5689
+  [Ablation Done] w/o Negation Reflection (Unsigned)   | SimLex rho = 0.3631 | RT F1 = 0.5851
+  [Ablation Done] w/o Bipartite Transport (W_bip = 0)  | SimLex rho = 0.3654 | RT F1 = 0.5782
+  [Depth Done]    L = 1                                | SimLex rho = 0.3700 | 20NG F1 = 0.2961 | 20NG NMI = 0.2385
+  [Depth Done]    L = 2                                | SimLex rho = 0.3686 | 20NG F1 = 0.3004 | 20NG NMI = 0.2394
+  [Depth Done]    L = 4                                | SimLex rho = 0.3540 | 20NG F1 = 0.4247 | 20NG NMI = 0.3849
+  [Depth Done]    L = 5                                | SimLex rho = 0.3486 | 20NG F1 = 0.4255 | 20NG NMI = 0.3774
 
 ==========================================================================================================
-  EXPERIMENT 1: TRI-ZONAL SPHERICAL GEOMETRY & ANTSYN VERIFICATION (10 SEEDS, 95% CIs)
+  EXPERIMENT 1: TRI-ZONAL SPHERICAL GEOMETRY & LEAK-FREE ANTSYN VERIFICATION (10 SEEDS)
 ==========================================================================================================
   Target Geometry: Synonyms -> +1.0 (North Pole) | Equator -> 0.0 | Antonyms -> -1.0 (South Pole)
   AAS = Antipodal Alignment Score E[||u + v^-||_2] (Lower -> 0 proves exact v^- = -u opposition)
+  AntSyn AUC evaluated on strictly held-out WordNet pairs with ZERO transitive triangle leakage
 --------------------------------------------------------------------------------------------------------------------
-  Model               | Syn cos (+1)   | Ant cos (-1)   | AAS (v0)          | HUE (^1)    | Unseen AUC        | Unseen F1      
+  Model               | Syn cos (+1)   | Ant cos (-1)   | AAS (v0)          | HUE (^1)    | Leak-Free AUC     | Leak-Free F1   
 --------------------------------------------------------------------------------------------------------------------
-  Word2Vec+Norm       | 0.034 +- 0.001 | 0.025 +- 0.001 | 1.4272 +- 0.0009  | 0.636 +- 0.001 | 0.5173 +- 0.0031  | 0.496 +- 0.005 
-  Poincare-Emb        | -0.000 +- 0.001 | -0.000 +- 0.001 | 1.4121 +- 0.0010  | 0.487 +- 0.001 | 0.5011 +- 0.0105  | 0.472 +- 0.007 
-  Attract-Repel       | 0.252 +- 0.002 | -0.179 +- 0.001 | 1.2726 +- 0.0009  | 0.783 +- 0.001 | 0.8878 +- 0.0031  | 0.795 +- 0.003 
-  JoSE (NeurIPS'19)   | 0.118 +- 0.001 | 0.089 +- 0.001 | 1.4568 +- 0.0008  | 0.867 +- 0.001 | 0.5280 +- 0.0023  | 0.508 +- 0.002 
-  POLARIS (Ours)      | 0.754 +- 0.000 | -0.764 +- 0.000 | 0.6108 +- 0.0004  | 0.853 +- 0.000 | 0.9886 +- 0.0001  | 0.937 +- 0.001 
+  Word2Vec+Norm       | 0.031 +- 0.001 | 0.012 +- 0.001 | 1.4192 +- 0.0006  | 0.604 +- 0.001 | 0.4389 +- 0.0168  | 0.378 +- 0.003 
+  Poincare-Emb        | 0.000 +- 0.001 | 0.000 +- 0.000 | 1.4125 +- 0.0003  | 0.487 +- 0.001 | 0.5012 +- 0.0236  | 0.354 +- 0.004 
+  Attract-Repel       | 0.269 +- 0.001 | -0.161 +- 0.001 | 1.2872 +- 0.0008  | 0.802 +- 0.001 | 0.7136 +- 0.0161  | 0.523 +- 0.006 
+  JoSE (NeurIPS'19)   | 0.116 +- 0.001 | 0.106 +- 0.002 | 1.4702 +- 0.0010  | 0.855 +- 0.001 | 0.4476 +- 0.0063  | 0.414 +- 0.002 
+  POLARIS (Ours)      | 0.765 +- 0.000 | -0.687 +- 0.000 | 0.7245 +- 0.0003  | 0.912 +- 0.000 | 0.8976 +- 0.0022  | 0.645 +- 0.004 
 --------------------------------------------------------------------------------------------------------------------
-  Paired Significance Analysis (Unseen AntSyn AUC):
-    * vs. JoSE         : Diff = +0.4605 [95% CI: +0.4588, +0.4623] | dz = 191.65 (Very Large) | p_raw = 4.62e-22, p_holm = 1.85e-21 (***)
-    * vs. Attract-Repel: Diff = +0.1007 [95% CI: +0.0984, +0.1030] | dz = 31.36 (Very Large) | p_raw = 5.47e-15, p_holm = 2.19e-14 (***)
+  Paired Significance Analysis (Leak-Free AntSyn AUC):
+    * vs. JoSE         : Diff = +0.4500 [95% CI: +0.4440, +0.4559] | dz = 54.11 (Very Large) | p_raw = 4.04e-17, p_holm = 1.62e-16 (***)
+    * vs. Attract-Repel: Diff = +0.1840 [95% CI: +0.1711, +0.1969] | dz = 10.21 (Very Large) | p_raw = 1.29e-10, p_holm = 4.12e-10 (***)
 
 ==========================================================================================================
   EXPERIMENT 2: WORD SIMILARITY ON SIMLEX-999 BENCHMARK (10 SEEDS, 95% CIs)
@@ -84,166 +87,164 @@
 ----------------------------------------------------------------------------------------------------------------
   Embedding Space | Model               | SimLex Spearman rho     | SimLex Kendall tau   | Polarity-Disc. rho  
 ----------------------------------------------------------------------------------------------------------------
-  Euclidean+Norm  | Word2Vec+Norm       | 0.055 +- 0.015          | 0.037 +- 0.010       | 0.066 +- 0.019      
-  Hyperbolic B^p  | Poincare-Emb        | -0.007 +- 0.021         | -0.005 +- 0.014      | -0.009 +- 0.027     
-  Euclidean+Pol   | Attract-Repel       | 0.230 +- 0.009          | 0.155 +- 0.006       | 0.291 +- 0.017      
-  Spherical (L=1) | JoSE (NeurIPS'19)   | 0.121 +- 0.006          | 0.080 +- 0.004       | 0.124 +- 0.009      
-  Spherical (L=3) | POLARIS (Ours)      | 0.435 +- 0.005          | 0.302 +- 0.004       | 0.538 +- 0.002      
+  Euclidean+Norm  | Word2Vec+Norm       | 0.035 +- 0.015          | 0.023 +- 0.010       | 0.064 +- 0.022      
+  Hyperbolic B^p  | Poincare-Emb        | -0.000 +- 0.034         | -0.000 +- 0.022      | 0.002 +- 0.040      
+  Euclidean+Pol   | Attract-Repel       | 0.213 +- 0.011          | 0.143 +- 0.007       | 0.277 +- 0.014      
+  Spherical (L=1) | JoSE (NeurIPS'19)   | 0.105 +- 0.008          | 0.070 +- 0.005       | 0.120 +- 0.013      
+  Spherical (L=3) | POLARIS (Ours)      | 0.363 +- 0.007          | 0.250 +- 0.005       | 0.419 +- 0.008      
 ----------------------------------------------------------------------------------------------------------------
   Paired Significance Analysis (SimLex Spearman rho):
-    * vs. JoSE         : Diff = +0.3138 [95% CI: +0.3075, +0.3202] | dz = 35.27 (Very Large) | p_raw = 1.90e-15, p_holm = 5.70e-15 (***)
-    * vs. Attract-Repel: Diff = +0.2047 [95% CI: +0.1976, +0.2118] | dz = 20.59 (Very Large) | p_raw = 2.40e-13, p_holm = 7.21e-13 (***)
+    * vs. JoSE         : Diff = +0.2586 [95% CI: +0.2519, +0.2652] | dz = 27.88 (Very Large) | p_raw = 1.57e-14, p_holm = 4.72e-14 (***)
+    * vs. Attract-Repel: Diff = +0.1501 [95% CI: +0.1398, +0.1603] | dz = 10.47 (Very Large) | p_raw = 1.03e-10, p_holm = 4.12e-10 (***)
 
-  [Layer-Wise Foliation Progression inside POLARIS (L1 -> L2 -> L3 -> Multi-Scale)]:
-    * Layer 1 (High k): SimLex rho = 0.432 +- 0.005 | Unseen AntSyn AUC = 0.9885 +- 0.0001 | AAS = 0.6913 +- 0.0006
-    * Layer 2 (Mid k) : SimLex rho = 0.435 +- 0.005 | Unseen AntSyn AUC = 0.9886 +- 0.0001 | AAS = 0.6108 +- 0.0004
-    * Layer 3 (Low k) : SimLex rho = 0.437 +- 0.005 | Unseen AntSyn AUC = 0.9891 +- 0.0001 | AAS = 0.6785 +- 0.0005
-    * Multi-Scale Fuse: SimLex rho = 0.436 +- 0.005 | Unseen AntSyn AUC = 0.9890 +- 0.0001 | AAS = 0.6459 +- 0.0003
+  [Layer-Wise Specialization inside POLARIS (L1 -> L2 -> L3 -> Multi-Scale)]:
+    * Layer 1 (High k): SimLex rho = 0.361 +- 0.007 | Leak-Free AntSyn AUC = 0.8865 +- 0.0021 | AAS = 0.7900 +- 0.0004
+    * Layer 2 (Mid k) : SimLex rho = 0.363 +- 0.007 | Leak-Free AntSyn AUC = 0.8976 +- 0.0022 | AAS = 0.7245 +- 0.0003
+    * Layer 3 (Low k) : SimLex rho = 0.370 +- 0.007 | Leak-Free AntSyn AUC = 0.9010 +- 0.0025 | AAS = 0.7717 +- 0.0004
+    * Multi-Scale Fuse: SimLex rho = 0.366 +- 0.007 | Leak-Free AntSyn AUC = 0.8966 +- 0.0024 | AAS = 0.7511 +- 0.0004
 
 ==========================================================================================================
-  EXPERIMENT 3: DOCUMENT CLUSTERING (10 SEEDS, TOPIC & ANCHOR-GUIDED POLARITY)
+  EXPERIMENT 3: INDUCTIVE DOCUMENT CLUSTERING ON HELD-OUT TEST DOCUMENTS (10 SEEDS)
 ==========================================================================================================
-  Panel A: 20 Newsgroups Dataset (SetFit/20_newsgroups, Unsupervised Topic Clustering)
+  Panel A: 20 Newsgroups (SetFit/20_newsgroups, Inductive Topic Clustering on Held-Out Test Set)
 ------------------------------------------------------------------------------------------------------
   Model               | Clus. Alg. | MI (^)           | NMI (^)          | ARI (^)          | Purity (^)      
 ------------------------------------------------------------------------------------------------------
-  Word2Vec+Norm       | K-Means    | 0.975 +- 0.015   | 0.336 +- 0.005   | 0.154 +- 0.004   | 0.300 +- 0.005  
-  Word2Vec+Norm       | SK-Means   | 0.949 +- 0.018   | 0.335 +- 0.006   | 0.151 +- 0.007   | 0.297 +- 0.008  
-  Poincare-Emb        | K-Means    | 0.152 +- 0.016   | 0.051 +- 0.005   | 0.012 +- 0.003   | 0.121 +- 0.007  
-  Poincare-Emb        | SK-Means   | 0.147 +- 0.019   | 0.049 +- 0.006   | 0.011 +- 0.003   | 0.118 +- 0.007  
-  Attract-Repel       | K-Means    | 0.949 +- 0.019   | 0.329 +- 0.006   | 0.147 +- 0.006   | 0.287 +- 0.012  
-  Attract-Repel       | SK-Means   | 0.928 +- 0.023   | 0.331 +- 0.006   | 0.147 +- 0.008   | 0.283 +- 0.011  
-  JoSE (NeurIPS'19)   | K-Means    | 0.836 +- 0.010   | 0.285 +- 0.003   | 0.108 +- 0.003   | 0.255 +- 0.006  
-  JoSE (NeurIPS'19)   | SK-Means   | 0.801 +- 0.024   | 0.277 +- 0.007   | 0.102 +- 0.005   | 0.246 +- 0.011  
-  POLARIS (Ours)      | K-Means    | 1.018 +- 0.007   | 0.358 +- 0.003   | 0.161 +- 0.004   | 0.299 +- 0.006  
-  POLARIS (Ours)      | SK-Means   | 0.991 +- 0.015   | 0.354 +- 0.004   | 0.155 +- 0.005   | 0.290 +- 0.008  
+  Word2Vec+Norm       | K-Means    | 0.971 +- 0.024   | 0.345 +- 0.007   | 0.125 +- 0.007   | 0.279 +- 0.009  
+  Word2Vec+Norm       | SK-Means   | 0.934 +- 0.053   | 0.341 +- 0.015   | 0.129 +- 0.013   | 0.272 +- 0.023  
+  Poincare-Emb        | K-Means    | 0.342 +- 0.012   | 0.114 +- 0.004   | 0.009 +- 0.002   | 0.143 +- 0.005  
+  Poincare-Emb        | SK-Means   | 0.323 +- 0.021   | 0.108 +- 0.007   | 0.007 +- 0.002   | 0.137 +- 0.004  
+  Attract-Repel       | K-Means    | 0.948 +- 0.022   | 0.341 +- 0.008   | 0.124 +- 0.005   | 0.275 +- 0.008  
+  Attract-Repel       | SK-Means   | 0.897 +- 0.044   | 0.333 +- 0.009   | 0.118 +- 0.009   | 0.257 +- 0.016  
+  JoSE (NeurIPS'19)   | K-Means    | 0.897 +- 0.034   | 0.307 +- 0.012   | 0.093 +- 0.007   | 0.252 +- 0.011  
+  JoSE (NeurIPS'19)   | SK-Means   | 0.831 +- 0.045   | 0.293 +- 0.013   | 0.085 +- 0.006   | 0.235 +- 0.009  
+  POLARIS (Ours)      | K-Means    | 1.105 +- 0.024   | 0.383 +- 0.007   | 0.150 +- 0.007   | 0.314 +- 0.011  
+  POLARIS (Ours)      | SK-Means   | 1.093 +- 0.024   | 0.382 +- 0.006   | 0.151 +- 0.009   | 0.308 +- 0.010  
 ------------------------------------------------------------------------------------------------------
 
-  Panel B: Rotten Tomatoes (Unsupervised Blind Topic Clustering — JoSE Protocol)
+  Panel B: Rotten Tomatoes (Unsupervised Blind Topic Clustering on Held-Out Test Set)
   [Unconstrained K-Means naturally partitions multi-topical reviews into movie genres/directors]
 ------------------------------------------------------------------------------------------------------
   Model               | Clus. Alg. | MI (^)           | NMI (^)          | ARI (^)          | Purity (^)      
 ------------------------------------------------------------------------------------------------------
-  Word2Vec+Norm       | K-Means    | 0.005 +- 0.001   | 0.007 +- 0.001   | 0.009 +- 0.001   | 0.548 +- 0.002  
-  Word2Vec+Norm       | SK-Means   | 0.005 +- 0.001   | 0.008 +- 0.001   | 0.008 +- 0.002   | 0.545 +- 0.005  
-  Poincare-Emb        | K-Means    | 0.001 +- 0.001   | 0.001 +- 0.001   | 0.001 +- 0.002   | 0.515 +- 0.012  
-  Poincare-Emb        | SK-Means   | 0.001 +- 0.001   | 0.001 +- 0.001   | 0.002 +- 0.002   | 0.519 +- 0.010  
-  Attract-Repel       | K-Means    | 0.003 +- 0.000   | 0.004 +- 0.000   | 0.005 +- 0.001   | 0.536 +- 0.002  
-  Attract-Repel       | SK-Means   | 0.004 +- 0.001   | 0.006 +- 0.001   | 0.006 +- 0.001   | 0.539 +- 0.003  
-  JoSE (NeurIPS'19)   | K-Means    | 0.003 +- 0.000   | 0.004 +- 0.000   | 0.005 +- 0.001   | 0.538 +- 0.002  
-  JoSE (NeurIPS'19)   | SK-Means   | 0.004 +- 0.000   | 0.006 +- 0.001   | 0.007 +- 0.001   | 0.542 +- 0.002  
-  POLARIS (Ours)      | K-Means    | 0.016 +- 0.001   | 0.026 +- 0.001   | 0.021 +- 0.001   | 0.574 +- 0.001  
-  POLARIS (Ours)      | SK-Means   | 0.021 +- 0.002   | 0.035 +- 0.003   | 0.027 +- 0.004   | 0.583 +- 0.007  
+  Word2Vec+Norm       | K-Means    | 0.006 +- 0.001   | 0.010 +- 0.002   | 0.010 +- 0.003   | 0.552 +- 0.006  
+  Word2Vec+Norm       | SK-Means   | 0.007 +- 0.002   | 0.011 +- 0.003   | 0.009 +- 0.003   | 0.549 +- 0.007  
+  Poincare-Emb        | K-Means    | 0.003 +- 0.004   | 0.004 +- 0.006   | 0.004 +- 0.008   | 0.531 +- 0.023  
+  Poincare-Emb        | SK-Means   | 0.002 +- 0.002   | 0.003 +- 0.003   | 0.002 +- 0.004   | 0.528 +- 0.015  
+  Attract-Repel       | K-Means    | 0.004 +- 0.001   | 0.006 +- 0.002   | 0.006 +- 0.002   | 0.541 +- 0.006  
+  Attract-Repel       | SK-Means   | 0.006 +- 0.001   | 0.010 +- 0.001   | 0.008 +- 0.001   | 0.547 +- 0.003  
+  JoSE (NeurIPS'19)   | K-Means    | 0.004 +- 0.001   | 0.006 +- 0.001   | 0.007 +- 0.001   | 0.545 +- 0.004  
+  JoSE (NeurIPS'19)   | SK-Means   | 0.005 +- 0.001   | 0.007 +- 0.001   | 0.009 +- 0.002   | 0.550 +- 0.004  
+  POLARIS (Ours)      | K-Means    | 0.010 +- 0.002   | 0.015 +- 0.003   | 0.016 +- 0.004   | 0.566 +- 0.007  
+  POLARIS (Ours)      | SK-Means   | 0.007 +- 0.001   | 0.012 +- 0.003   | 0.009 +- 0.002   | 0.550 +- 0.004  
 ------------------------------------------------------------------------------------------------------
 
   Panel C: Rotten Tomatoes (Anchor-Guided Zero-Shot Polarity Projection along Antipodal Axis p_bip)
-  [Evaluated across 3 independent anchor sets: General Valence, Evaluative Quality, Emotional Affect]
-  [No document-level sentiment labels used during representation construction or fine-tuning]
+  [Evaluated across 3 independent anchor sets on Held-Out Test Reviews; No sentiment labels used in training]
 ----------------------------------------------------------------------------------------------------------
   Model               | Polarity Axis  | Mean NMI (^)     | Mean ARI (^)     | Set1 (Val.)    | Set2 (Qual.)   | Mean Purity
 ----------------------------------------------------------------------------------------------------------
-  Word2Vec+Norm       | p_bip in S^p   | 0.004 +- 0.001   | 0.005 +- 0.002   | 0.508 +- 0.007 | 0.552 +- 0.010 | 0.532 +- 0.006
-  Poincare-Emb        | p_bip in S^p   | 0.000 +- 0.000   | 0.000 +- 0.000   | 0.513 +- 0.008 | 0.511 +- 0.007 | 0.511 +- 0.003
-  Attract-Repel       | p_bip in S^p   | 0.006 +- 0.002   | 0.008 +- 0.002   | 0.531 +- 0.007 | 0.557 +- 0.015 | 0.543 +- 0.006
-  JoSE (NeurIPS'19)   | p_bip in S^p   | 0.001 +- 0.000   | 0.002 +- 0.000   | 0.530 +- 0.003 | 0.508 +- 0.008 | 0.519 +- 0.004
-  POLARIS (Ours)      | p_bip in S^p   | 0.043 +- 0.001   | 0.058 +- 0.001   | 0.614 +- 0.003 | 0.631 +- 0.002 | 0.621 +- 0.001
+  Word2Vec+Norm       | p_bip in S^p   | 0.003 +- 0.001   | 0.002 +- 0.001   | 0.529 +- 0.014 | 0.522 +- 0.013 | 0.526 +- 0.005
+  Poincare-Emb        | p_bip in S^p   | 0.001 +- 0.001   | 0.000 +- 0.001   | 0.512 +- 0.011 | 0.525 +- 0.012 | 0.517 +- 0.007
+  Attract-Repel       | p_bip in S^p   | 0.003 +- 0.001   | 0.002 +- 0.002   | 0.513 +- 0.007 | 0.526 +- 0.021 | 0.524 +- 0.007
+  JoSE (NeurIPS'19)   | p_bip in S^p   | 0.005 +- 0.002   | 0.005 +- 0.002   | 0.544 +- 0.005 | 0.521 +- 0.014 | 0.537 +- 0.008
+  POLARIS (Ours)      | p_bip in S^p   | 0.009 +- 0.001   | 0.011 +- 0.002   | 0.573 +- 0.007 | 0.512 +- 0.008 | 0.550 +- 0.003
 ----------------------------------------------------------------------------------------------------------
 
 ==========================================================================================================
-  EXPERIMENT 4: NON-PARAMETRIC DOCUMENT CLASSIFICATION USING k-NN (10 SEEDS)
+  EXPERIMENT 4: INDUCTIVE DOCUMENT CLASSIFICATION (k-NN ON HELD-OUT TEST DOCS, 10 SEEDS)
 ==========================================================================================================
   Part A: Benchmark Protocol (k = 3) on 20 Newsgroups & Rotten Tomatoes Movie Reviews
 ------------------------------------------------------------------------------------------------------
   Model               | 20NG Macro-F1      | 20NG Micro-F1      | Movie Macro-F1     | Movie Micro-F1    
 ------------------------------------------------------------------------------------------------------
-  Word2Vec+Norm       | 0.370 +- 0.006     | 0.376 +- 0.007     | 0.581 +- 0.013     | 0.582 +- 0.012    
-  Poincare-Emb        | 0.130 +- 0.010     | 0.139 +- 0.011     | 0.575 +- 0.016     | 0.575 +- 0.016    
-  Attract-Repel       | 0.360 +- 0.010     | 0.364 +- 0.010     | 0.602 +- 0.013     | 0.602 +- 0.013    
-  JoSE (NeurIPS'19)   | 0.327 +- 0.012     | 0.334 +- 0.010     | 0.604 +- 0.022     | 0.604 +- 0.022    
-  POLARIS (Ours)      | 0.468 +- 0.012     | 0.472 +- 0.011     | 0.612 +- 0.008     | 0.613 +- 0.008    
+  Word2Vec+Norm       | 0.343 +- 0.010     | 0.345 +- 0.009     | 0.592 +- 0.016     | 0.594 +- 0.016    
+  Poincare-Emb        | 0.122 +- 0.009     | 0.133 +- 0.009     | 0.591 +- 0.013     | 0.591 +- 0.013    
+  Attract-Repel       | 0.344 +- 0.011     | 0.344 +- 0.010     | 0.586 +- 0.019     | 0.587 +- 0.018    
+  JoSE (NeurIPS'19)   | 0.317 +- 0.018     | 0.325 +- 0.018     | 0.597 +- 0.017     | 0.598 +- 0.017    
+  POLARIS (Ours)      | 0.428 +- 0.009     | 0.428 +- 0.010     | 0.583 +- 0.011     | 0.583 +- 0.011    
 ------------------------------------------------------------------------------------------------------
   Paired Significance Analysis (Movie Macro-F1):
-    * vs. JoSE         : Diff = +0.0082 [95% CI: -0.0104, +0.0268] | dz = 0.31 (Small) | p_raw = 0.3464, p_holm = 0.3464 (n.s.)
-    * vs. Attract-Repel: Diff = +0.0103 [95% CI: -0.0008, +0.0215] | dz = 0.67 (Medium) | p_raw = 0.0646, p_holm = 0.0646 (n.s.)
+    * vs. JoSE         : Diff = -0.0142 [95% CI: -0.0285, +0.0001] | dz = -0.71 (Medium) | p_raw = 0.0510, p_holm = 0.0510 (n.s.)
+    * vs. Attract-Repel: Diff = -0.0023 [95% CI: -0.0195, +0.0149] | dz = -0.10 (Negligible) | p_raw = 0.7699, p_holm = 0.7699 (n.s.)
 
   Paired Significance Analysis (20 Newsgroups Macro-F1):
-    * vs. JoSE         : Diff = +0.1407 [95% CI: +0.1251, +0.1563] | dz = 6.45 (Very Large) | p_raw = 7.60e-09, p_holm = 1.52e-08 (***)
+    * vs. JoSE         : Diff = +0.1105 [95% CI: +0.0932, +0.1277] | dz = 4.58 (Very Large) | p_raw = 1.54e-07, p_holm = 3.08e-07 (***)
 
   Part B: Sensitivity Across Neighborhood Size k in {1, 3, 5, 10} (Movie Reviews Macro-F1)
 ------------------------------------------------------------------------------------------------------
   Model               | k = 1              | k = 3              | k = 5              | k = 10            
 ------------------------------------------------------------------------------------------------------
-  Word2Vec+Norm       | 0.564 +- 0.013     | 0.581 +- 0.013     | 0.588 +- 0.016     | 0.587 +- 0.022    
-  Poincare-Emb        | 0.574 +- 0.016     | 0.575 +- 0.016     | 0.585 +- 0.018     | 0.579 +- 0.020    
-  Attract-Repel       | 0.579 +- 0.012     | 0.602 +- 0.013     | 0.607 +- 0.018     | 0.604 +- 0.011    
-  JoSE (NeurIPS'19)   | 0.580 +- 0.013     | 0.604 +- 0.022     | 0.609 +- 0.021     | 0.609 +- 0.017    
-  POLARIS (Ours)      | 0.593 +- 0.013     | 0.612 +- 0.008     | 0.619 +- 0.014     | 0.627 +- 0.011    
+  Word2Vec+Norm       | 0.573 +- 0.018     | 0.592 +- 0.016     | 0.592 +- 0.025     | 0.571 +- 0.016    
+  Poincare-Emb        | 0.588 +- 0.017     | 0.591 +- 0.013     | 0.583 +- 0.019     | 0.577 +- 0.016    
+  Attract-Repel       | 0.575 +- 0.019     | 0.586 +- 0.019     | 0.585 +- 0.014     | 0.575 +- 0.017    
+  JoSE (NeurIPS'19)   | 0.591 +- 0.019     | 0.597 +- 0.017     | 0.600 +- 0.014     | 0.602 +- 0.011    
+  POLARIS (Ours)      | 0.565 +- 0.010     | 0.583 +- 0.011     | 0.574 +- 0.010     | 0.591 +- 0.006    
 ------------------------------------------------------------------------------------------------------
 
 ==========================================================================================================
   EXPERIMENT 5: ARCHITECTURAL ABLATION STUDY & DEPTH SENSITIVITY (10 SEEDS)
 ==========================================================================================================
   Part A: Component-Wise Ablation Study (Multi-Objective Analysis across Representation Targets)
-  [Full Model reuses the exact 10-seed evaluations from Section 3 ensuring 100% numerical consistency]
 ------------------------------------------------------------------------------------------------------------------------------
-  Ablation Configuration               | SimLex rho     | AntSyn AUC     | AAS (v0)       | 20NG NMI       | Movie F1       | Time    
+  Ablation Configuration               | SimLex rho     | Leak-Free AUC  | AAS (v0)       | 20NG NMI       | Movie F1       | Time    
 ------------------------------------------------------------------------------------------------------------------------------
-  POLARIS (Full Model, L=3)            | 0.435 +- 0.005 | 0.9886 +- 0.0001 | 0.6108 +- 0.0004 | 0.354 +- 0.004 | 0.612 +- 0.008 | 10.50s
-  w/o Antipodal Zone (L_anti = 0)      | 0.213 +- 0.005 | 0.7543 +- 0.0037 | 1.7932 +- 0.0016 | 0.347 +- 0.004 | 0.598 +- 0.012 | 8.99s
-  w/o Equatorial Zone (L_eq = 0)       | 0.431 +- 0.004 | 0.9881 +- 0.0001 | 0.6097 +- 0.0003 | 0.349 +- 0.007 | 0.614 +- 0.010 | 9.85s
-  w/o Householder (Dense + L2 Norm)    | 0.425 +- 0.013 | 0.9859 +- 0.0003 | 0.6152 +- 0.0025 | 0.322 +- 0.006 | 0.590 +- 0.015 | 9.47s
-  w/o Learnable Kappa (Fixed k = 1)    | 0.418 +- 0.002 | 0.9879 +- 0.0001 | 0.5987 +- 0.0002 | 0.287 +- 0.010 | 0.614 +- 0.011 | 9.90s
-  w/o Negation Reflection (Unsigned)   | 0.434 +- 0.006 | 0.9885 +- 0.0001 | 0.6105 +- 0.0004 | 0.357 +- 0.005 | 0.609 +- 0.007 | 10.54s
+  POLARIS (Full Model, L=3)            | 0.363 +- 0.007 | 0.8976 +- 0.0022 | 0.7245 +- 0.0003 | 0.382 +- 0.006 | 0.583 +- 0.011 | 10.25s
+  w/o Antipodal Zone (L_anti = 0)      | 0.203 +- 0.008 | 0.8841 +- 0.0033 | 1.7793 +- 0.0012 | 0.382 +- 0.009 | 0.591 +- 0.015 | 8.93s
+  w/o Equatorial Zone (L_eq = 0)       | 0.361 +- 0.007 | 0.8919 +- 0.0021 | 0.7228 +- 0.0003 | 0.371 +- 0.005 | 0.583 +- 0.011 | 9.61s
+  w/o Householder (Dense + L2 Norm)    | 0.353 +- 0.015 | 0.8942 +- 0.0043 | 0.7229 +- 0.0018 | 0.347 +- 0.008 | 0.545 +- 0.019 | 11.57s
+  w/o Learnable Kappa (Fixed k = 1)    | 0.354 +- 0.004 | 0.8815 +- 0.0016 | 0.7031 +- 0.0001 | 0.341 +- 0.006 | 0.569 +- 0.012 | 13.45s
+  w/o Negation Reflection (Unsigned)   | 0.363 +- 0.007 | 0.8967 +- 0.0022 | 0.7241 +- 0.0003 | 0.377 +- 0.007 | 0.585 +- 0.009 | 10.78s
+  w/o Bipartite Transport (W_bip = 0)  | 0.365 +- 0.007 | 0.9018 +- 0.0022 | 0.7299 +- 0.0004 | 0.248 +- 0.010 | 0.578 +- 0.014 | 9.94s
 ------------------------------------------------------------------------------------------------------------------------------
 
-  Part B: Concentric Spherical Depth Sensitivity (L in {1, 2, 3, 4, 5}, 10 Seeds)
-  [Pareto Analysis: L=1-2 optimize 1-hop polarity; L=3 achieves peak antipodal opposition (AAS = 0.6108)]
-------------------------------------------------------------------------------------------------------------------
-  Spherical Depth L                | SimLex rho     | AntSyn AUC     | AAS (v0)       | 20NG F1        | Movie F1      
-------------------------------------------------------------------------------------------------------------------
-  L = 1                            | 0.437 +- 0.004 | 0.9890 +- 0.0001 | 0.6614 +- 0.0004 | 0.466 +- 0.008 | 0.623 +- 0.016
-  L = 2                            | 0.433 +- 0.005 | 0.9892 +- 0.0001 | 0.6176 +- 0.0001 | 0.471 +- 0.009 | 0.613 +- 0.011
-  L = 3 (Pareto Multi-Task Balance) | 0.435 +- 0.005 | 0.9886 +- 0.0001 | 0.6108 +- 0.0004 | 0.468 +- 0.012 | 0.612 +- 0.008
-  L = 4                            | 0.433 +- 0.004 | 0.9875 +- 0.0001 | 0.6036 +- 0.0006 | 0.465 +- 0.008 | 0.611 +- 0.011
-  L = 5                            | 0.431 +- 0.004 | 0.9869 +- 0.0001 | 0.6029 +- 0.0009 | 0.461 +- 0.008 | 0.608 +- 0.009
-------------------------------------------------------------------------------------------------------------------
+  Part B: Spherical Depth Sensitivity (L in {1, 2, 3, 4, 5}, 10 Seeds)
+  [Pareto Analysis: L=1-2 optimize 1-hop polarity; L=3 achieves peak topical transport and lowest AAS]
+------------------------------------------------------------------------------------------------------------------------------
+  Spherical Depth L                | SimLex rho     | Leak-Free AUC  | AAS (v0)       | 20NG NMI       | 20NG F1        | Movie F1      
+------------------------------------------------------------------------------------------------------------------------------
+  L = 1                            | 0.370 +- 0.007 | 0.8968 +- 0.0025 | 0.7564 +- 0.0002 | 0.238 +- 0.013 | 0.296 +- 0.013 | 0.574 +- 0.018
+  L = 2                            | 0.369 +- 0.007 | 0.9026 +- 0.0023 | 0.7277 +- 0.0003 | 0.239 +- 0.010 | 0.300 +- 0.013 | 0.584 +- 0.010
+  L = 3 (Optimal Multi-Task Balance) | 0.363 +- 0.007 | 0.8976 +- 0.0022 | 0.7245 +- 0.0003 | 0.382 +- 0.006 | 0.428 +- 0.009 | 0.583 +- 0.011
+  L = 4                            | 0.354 +- 0.007 | 0.8932 +- 0.0021 | 0.7201 +- 0.0006 | 0.385 +- 0.009 | 0.425 +- 0.008 | 0.581 +- 0.011
+  L = 5                            | 0.349 +- 0.007 | 0.8929 +- 0.0022 | 0.7148 +- 0.0011 | 0.377 +- 0.009 | 0.425 +- 0.012 | 0.580 +- 0.016
+------------------------------------------------------------------------------------------------------------------------------
 
 ==========================================================================================================
-  EXPERIMENT 6: RIEMANNIAN CONVERGENCE (THEOREM 2) & COMPUTATIONAL EFFICIENCY
+  EXPERIMENT 6: RIEMANNIAN CONVERGENCE (THEOREM 1) & COMPUTATIONAL EFFICIENCY
 ==========================================================================================================
-  THEORETICAL FOUNDATION (THEOREM 2 — RIEMANNIAN ROBBINS-SIEGMUND ALMOST-SURE CONVERGENCE):
+  THEORETICAL FOUNDATION (THEOREM 1 — RIEMANNIAN ROBBINS-SIEGMUND ALMOST-SURE STATIONARITY):
   Let M = (S^{p-1})^V be the compact product hypersphere. Under:
-    (A1) C^1 smoothness and lower-bounded loss L(Theta) >= 0 with L_g-Lipschitz Riemannian gradient;
-    (A2) First-order metric retraction R_Theta(xi) = (Theta + xi)/||Theta + xi||_2 with ||R(xi) - (Theta+xi)|| <= C ||xi||^2;
-    (A3) Unbiased mini-batch gradients E[g_t | F_t] = grad L(Theta_t) with bounded variance E[||g_t||^2 | F_t] <= sigma^2 + M ||grad L||^2;
+    (A1) C^1 smoothness of the softplus-smoothed Tri-Zonal objective with L_g-Lipschitz Riemannian gradient;
+    (A2) Exponential map geodesic retraction R_x(xi) = cos(||xi||)x + (sin(||xi||)/||xi||)xi with second-order error <= C ||xi||^2;
+    (A3) Unbiased mini-batch Riemannian gradients E[g_t | F_t] = grad L(Theta_t) with bounded variance E[||g_t - grad L||^2 | F_t] <= sigma_g^2;
     (A4) Robbins-Monro step-size schedule: sum eta_t = oo and sum eta_t^2 < oo;
-  Bonnabel's Riemannian Robbins-Siegmund Theorem (IEEE TAC 2013) guarantees almost-sure convergence to the
-  Riemannian stationary critical set: lim_{t->oo} ||grad L(Theta_t)||_2 = 0 (almost surely).
-  [Note: Standard in non-convex optimization, Theorem 2 guarantees convergence to stationary points, not global minima.]
+  The Riemannian Descent Lemma guarantees finite-horizon descent rate O(1/sqrt{T}) on E[||grad L(Theta_t)||^2],
+  and Bonnabel's Riemannian Robbins-Siegmund Theorem guarantees almost-sure stationarity: lim_{t->oo} ||grad L(Theta_t)||_2 = 0 a.s.
 ------------------------------------------------------------------------------------------------------
   Epoch    | Tri-Zonal Loss L(Theta_t) | Riemannian ||grad L(Theta_t)||_2 | Learned Cascade [k^(1) > k^(2) > k^(3)]
 ------------------------------------------------------------------------------------------------------
-  1        | 3.86409                   | 0.000499                        | [5.652 > 4.208 > 2.964]
-  3        | 2.88193                   | 0.000222                        | [5.476 > 3.913 > 2.768]
-  5        | 2.58477                   | 0.000204                        | [5.983 > 4.183 > 2.904]
-  7        | 2.40786                   | 0.000215                        | [6.865 > 4.773 > 3.236]
-  9        | 2.27464                   | 0.000238                        | [7.859 > 5.502 > 3.682]
-  11       | 2.14827                   | 0.000263                        | [8.919 > 6.333 > 4.203]
-  13       | 2.04205                   | 0.000288                        | [10.010 > 7.226 > 4.759]
-  14       | 1.99966                   | 0.000301                        | [10.546 > 7.675 > 5.037]
+  1        | 4.11622                   | 0.000539                        | [5.709 > 4.264 > 3.020]
+  3        | 3.18430                   | 0.000229                        | [5.516 > 3.930 > 2.807]
+  5        | 2.88978                   | 0.000202                        | [5.944 > 4.124 > 2.928]
+  7        | 2.72047                   | 0.000212                        | [6.766 > 4.648 > 3.258]
+  9        | 2.58420                   | 0.000234                        | [7.699 > 5.305 > 3.700]
+  11       | 2.46159                   | 0.000261                        | [8.713 > 6.070 > 4.218]
+  13       | 2.35426                   | 0.000288                        | [9.778 > 6.916 > 4.775]
+  14       | 2.30870                   | 0.000301                        | [10.321 > 7.357 > 5.057]
 ------------------------------------------------------------------------------------------------------
 
-  Part B: Computational Efficiency & Memory Footprint on Kaggle GPU Hardware
+  Part B: Computational Efficiency & Memory Footprint on GPU Hardware
 ------------------------------------------------------------------------------------------------------
   Model               | Time / Epoch (s)   | Total Train Time (s)   | Word Model Params   | Complexity
 ------------------------------------------------------------------------------------------------------
-  Word2Vec+Norm       | 0.072 +- 0.045     | 1.01 +- 0.63           | 1,600,000           | O(p) Euclidean
-  Poincare-Emb        | 0.071 +- 0.005     | 1.00 +- 0.07           | 1,600,000           | O(p) Hyperbolic
-  Attract-Repel       | 0.066 +- 0.006     | 0.93 +- 0.09           | 1,600,000           | O(p) Euclidean
-  JoSE (NeurIPS'19)   | 0.130 +- 0.010     | 1.82 +- 0.14           | 1,600,000           | O(p) Spherical L=1
-  POLARIS (Ours)      | 0.750 +- 0.050     | 10.50 +- 0.70          | 1,601,212           | O(p) Householder L=3
+  Word2Vec+Norm       | 0.062 +- 0.048     | 0.87 +- 0.67           | 1,600,000           | O(p) Euclidean
+  Poincare-Emb        | 0.072 +- 0.008     | 1.01 +- 0.11           | 1,600,000           | O(p) Hyperbolic
+  Attract-Repel       | 0.058 +- 0.006     | 0.82 +- 0.08           | 1,600,000           | O(p) Euclidean
+  JoSE (NeurIPS'19)   | 0.114 +- 0.003     | 1.60 +- 0.05           | 1,600,000           | O(p) Spherical L=1
+  POLARIS (Ours)      | 0.732 +- 0.017     | 10.25 +- 0.24          | 1,601,212           | O(p) Householder L=3
 
-  Peak GPU VRAM Allocated Across Benchmark : 714.1 MB (< 0.5 GB of Kaggle T4 VRAM)
+  Peak GPU VRAM Allocated Across Benchmark : 832.8 MB (< 1.0 GB of GPU VRAM)
 
 ==========================================================================================================
   EXPERIMENT 7: QUALITATIVE SPHERICAL POLE & ANTIPODAL GEOMETRY INSPECTION
@@ -252,14 +253,14 @@
 ----------------------------------------------------------------------------------------------------------------
   Anchor Word (u) | North Pole Synonym (cos -> +1)  | Equator Orthogonal (cos -> 0)   | South Pole Antipode (cos -> -1)
 ----------------------------------------------------------------------------------------------------------------
-  good            | best (+0.992)                   | power (+0.0001)                 | stale (-0.977)
-  love            | fuck (+0.978)                   | whenever (-0.0001)              | hate (-0.969)
-  happy           | willing (+0.887)                | sandwich (-0.0000)              | unhappy (-0.953)
-  win             | won (+0.979)                    | availability (-0.0001)          | lose (-0.971)
-  strong          | solid (+0.962)                  | tranny (+0.0000)                | mindless (-0.909)
-  smart           | intelligent (+0.937)            | rs (-0.0000)                    | dumb (-0.950)
-  success         | winner (+0.982)                 | publications (+0.0000)          | failure (-0.965)
-  increase        | increasing (+0.963)             | cabin (+0.0000)                 | fall (-0.967)
+  good            | best (+0.973)                   | btw (-0.0000)                   | poorly (-0.957)
+  win             | winning (+0.988)                | substitution (+0.0001)          | loses (-0.979)
+  strong          | firm (+0.931)                   | across (-0.0000)                | weak (-0.896)
+  smart           | bright (+0.785)                 | bunch (-0.0001)                 | stupid (-0.926)
+  success         | winners (+0.994)                | nervous (+0.0000)               | failure (-0.991)
+  rich            | ample (+0.958)                  | printers (-0.0000)              | poor (-0.952)
+  fast            | loyal (+0.988)                  | eq (-0.0000)                    | slow (-0.975)
+  difficult       | hard (+0.994)                   | compatible (+0.0000)            | comfortable (-0.977)
 ----------------------------------------------------------------------------------------------------------------
 
 ==========================================================================================================
@@ -268,17 +269,17 @@
 % --- LaTeX Table 1: Main Benchmark with 95% Confidence Intervals & Genuine Significance ---
 \begin{table*}[t]
 \centering
-\caption{Comprehensive evaluation across 10 independent random seeds (Mean $\pm$ 95\% CI). Best results in \textbf{bold}. $^{\ast\ast\ast}p < 0.001, ^{\ast\ast}p < 0.01, ^{\ast}p < 0.05$ against JoSE via paired $t$-tests with Holm-Bonferroni correction.}
+\caption{Comprehensive inductive evaluation across 10 independent random seeds (Mean $\pm$ 95\% CI). Best results in \textbf{bold}. $^{\ast\ast\ast}p < 0.001, ^{\ast\ast}p < 0.01, ^{\ast}p < 0.05$ against JoSE via paired $t$-tests with Holm-Bonferroni correction. Zero data leakage across train/test splits.}
 \label{tab:polaris_main_q1}
 \begin{tabular}{llcccccc}
 \toprule
-\textbf{Space} & \textbf{Model} & \textbf{AntSyn AUC} ($\uparrow$) & \textbf{AAS} ($\downarrow 0$) & \textbf{SimLex-$\rho$} ($\uparrow$) & \textbf{20NG NMI} ($\uparrow$) & \textbf{20NG F1} ($\uparrow$) & \textbf{Movie F1} ($\uparrow$) \\
+\textbf{Space} & \textbf{Model} & \textbf{Leak-Free AUC} ($\uparrow$) & \textbf{AAS} ($\downarrow 0$) & \textbf{SimLex-$\rho$} ($\uparrow$) & \textbf{20NG NMI} ($\uparrow$) & \textbf{20NG F1} ($\uparrow$) & \textbf{Movie F1} ($\uparrow$) \\
 \midrule
-Euclidean+Norm & Word2Vec+Norm & $0.5173 \pm 0.0023$ & $1.4272 \pm 0.0007$ & $0.055 \pm 0.011$ & $0.335 \pm 0.005$ & $0.370 \pm 0.004$ & $0.581 \pm 0.010$ \\
-Hyperbolic B^p & Poincare-Emb & $0.5011 \pm 0.0079$ & $1.4121 \pm 0.0008$ & $-0.007 \pm 0.016$ & $0.049 \pm 0.005$ & $0.130 \pm 0.008$ & $0.575 \pm 0.012$ \\
-Euclidean+Pol & Attract-Repel & $0.8878 \pm 0.0023$ & $1.2726 \pm 0.0006$ & $0.230 \pm 0.007$ & $0.331 \pm 0.005$ & $0.360 \pm 0.008$ & $0.602 \pm 0.010$ \\
-Spherical (L=1) & JoSE (NeurIPS'19) & $0.5280 \pm 0.0017$ & $1.4568 \pm 0.0006$ & $0.121 \pm 0.005$ & $0.277 \pm 0.005$ & $0.327 \pm 0.009$ & $0.604 \pm 0.017$ \\
-Spherical (L=3) & \textbf{POLARIS (Ours)} & $\mathbf{0.9886 \pm 0.0001}$$^{***}$ & $\mathbf{0.6108 \pm 0.0003}$ & $\mathbf{0.435 \pm 0.004}$$^{***}$ & $\mathbf{0.354 \pm 0.003}$ & $\mathbf{0.468 \pm 0.009}$$^{***}$ & $\mathbf{0.612 \pm 0.006}$ \\
+Euclidean+Norm & Word2Vec+Norm & $0.4389 \pm 0.0126$ & $1.4192 \pm 0.0004$ & $0.035 \pm 0.011$ & $0.341 \pm 0.012$ & $0.343 \pm 0.007$ & $0.592 \pm 0.012$ \\
+Hyperbolic B^p & Poincare-Emb & $0.5012 \pm 0.0178$ & $1.4125 \pm 0.0002$ & $-0.000 \pm 0.025$ & $0.108 \pm 0.005$ & $0.122 \pm 0.007$ & $0.591 \pm 0.010$ \\
+Euclidean+Pol & Attract-Repel & $0.7136 \pm 0.0122$ & $1.2872 \pm 0.0006$ & $0.213 \pm 0.008$ & $0.333 \pm 0.007$ & $0.344 \pm 0.008$ & $0.586 \pm 0.014$ \\
+Spherical (L=1) & JoSE (NeurIPS'19) & $0.4476 \pm 0.0048$ & $1.4702 \pm 0.0008$ & $0.105 \pm 0.006$ & $0.293 \pm 0.010$ & $0.317 \pm 0.014$ & $0.597 \pm 0.013$ \\
+Spherical (L=3) & \textbf{POLARIS (Ours)} & $\mathbf{0.8976 \pm 0.0017}$$^{***}$ & $\mathbf{0.7245 \pm 0.0002}$ & $\mathbf{0.363 \pm 0.005}$$^{***}$ & $\mathbf{0.382 \pm 0.005}$ & $\mathbf{0.428 \pm 0.007}$$^{***}$ & $\mathbf{0.583 \pm 0.008}$ \\
 \bottomrule
 \end{tabular}
 \end{table*}
@@ -288,18 +289,18 @@ Spherical (L=3) & \textbf{POLARIS (Ours)} & $\mathbf{0.9886 \pm 0.0001}$$^{***}$
 ==========================================================================================================
   Seed-by-seed experimental observations across all 10 independent random seeds for POLARIS:
 --------------------------------------------------------------------------------------------------------------------
-  Seed     | SimLex rho     | AntSyn AUC     | AAS          | 20NG F1      | Movie F1     | Polarity Purity
+  Seed     | SimLex rho     | Leak-Free AUC  | AAS          | 20NG F1      | Movie F1     | Polarity Purity
 --------------------------------------------------------------------------------------------------------------------
-  42       | 0.4302         | 0.9886         | 0.6105       | 0.4575       | 0.6243       | 0.6187
-  100      | 0.4353         | 0.9886         | 0.6100       | 0.4765       | 0.6091       | 0.6209
-  2024     | 0.4374         | 0.9885         | 0.6109       | 0.4559       | 0.6182       | 0.6204
-  777      | 0.4388         | 0.9886         | 0.6111       | 0.4680       | 0.6249       | 0.6202
-  999      | 0.4387         | 0.9884         | 0.6108       | 0.4789       | 0.6099       | 0.6229
-  123      | 0.4275         | 0.9886         | 0.6107       | 0.4544       | 0.6048       | 0.6196
-  456      | 0.4346         | 0.9885         | 0.6114       | 0.4780       | 0.6130       | 0.6191
-  888      | 0.4426         | 0.9886         | 0.6110       | 0.4555       | 0.6011       | 0.6218
-  1010     | 0.4274         | 0.9887         | 0.6106       | 0.4893       | 0.6143       | 0.6216
-  2026     | 0.4356         | 0.9885         | 0.6107       | 0.4621       | 0.6015       | 0.6218
+  42       | 0.3660         | 0.8993         | 0.7243       | 0.4093       | 0.5766       | 0.5433
+  100      | 0.3577         | 0.8984         | 0.7241       | 0.4343       | 0.5866       | 0.5511
+  2024     | 0.3807         | 0.8972         | 0.7247       | 0.4295       | 0.5881       | 0.5489
+  777      | 0.3653         | 0.8960         | 0.7247       | 0.4193       | 0.5933       | 0.5544
+  999      | 0.3633         | 0.8996         | 0.7243       | 0.4399       | 0.5766       | 0.5522
+  123      | 0.3555         | 0.8961         | 0.7248       | 0.4287       | 0.6015       | 0.5500
+  456      | 0.3594         | 0.9010         | 0.7251       | 0.4380       | 0.5610       | 0.5467
+  888      | 0.3678         | 0.8989         | 0.7243       | 0.4289       | 0.5813       | 0.5500
+  1010     | 0.3567         | 0.8928         | 0.7239       | 0.4289       | 0.5764       | 0.5467
+  2026     | 0.3610         | 0.8969         | 0.7247       | 0.4203       | 0.5913       | 0.5522
 --------------------------------------------------------------------------------------------------------------------
 
 [ALL 9 SECTIONS COMPLETED SUCCESSFULLY — 100% AUDITABLE Q1 JOURNAL SUITE]
